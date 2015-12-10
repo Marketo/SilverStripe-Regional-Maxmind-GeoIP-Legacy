@@ -103,9 +103,19 @@ class MarketoRegionalDriver extends DataObject
                 ->filter('RegionCode', $countryCode)
                 ->first();
             if ($geoRegion && $geoRegion->exists()) {
-                $result['location']['marketo_region_name'] = $geoRegion->Name;
-                $result['location']['marketo_region_code'] = $geoRegion->RegionCode;
-                $result['location']['marketo_region_time_zone'] = $geoRegion->TimeZone;
+                $result['marketo-region']['name'] = $geoRegion->Name;
+                $result['marketo-region']['code'] = $geoRegion->RegionCode;
+                $result['marketo-region']['time_zone'] = $geoRegion->TimeZone;
+                $currency = $geoRegion->Currency();
+                if ($currency && $currency->exists()) {
+                    $result['marketo-region']['currency']['name'] = $currency->Name;
+                    $result['marketo-region']['currency']['code'] = $currency->Code;
+                    $result['marketo-region']['currency']['num'] = $currency->Number;
+                    $result['marketo-region']['currency']['symbol'] = $currency->Symbol;
+                    $result['marketo-region']['currency']['thounsands'] = $currency->Thounsands;
+                    $result['marketo-region']['currency']['decimal'] = $currency->Deciaml;
+                    $result['marketo-region']['currency']['format'] = $currency->Format;
+                }
             }
         }
 
