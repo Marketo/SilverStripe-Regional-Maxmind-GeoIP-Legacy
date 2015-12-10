@@ -8,6 +8,7 @@
     "require": {
         "silverstripe/cms": "3.*",
         "composer/installers": "*",
+        "geoip/geoip": "~1.14",
         "marketo/silverstripe-regional": "*"
     },
 
