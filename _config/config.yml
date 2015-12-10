@@ -3,3 +3,11 @@ IPInfoCache:
   GeoPathCity: '/usr/share/GeoIP/GeoIPCity.dat'
   GeoPathCityV6: '/usr/share/GeoIP/GeoIPCity.dat'
   GeoPathISP: '/usr/share/GeoIP/GeoIPISP.dat'
+  Continents:
+    AS: Asia : AS
+    SA: South America: SA
+    NA: North America: NA
+    AF: Africa: AF
+    EU: Europe: EU
+    AN: Antarctica: AN
+    Oceania: OC

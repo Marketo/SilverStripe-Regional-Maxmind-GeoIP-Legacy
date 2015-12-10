@@ -75,19 +75,23 @@ class MarketoRegionalDriver extends DataObject
             try {
                 $result['location']['continent_code'] = $record->continent_code;
                 // fetch continent by continent_code
-                //$result['location']['continent_names'] = $record->continent->names;
+                $continents = Config::inst()->get(
+                    'IPInfoCache',
+                    'Continents'
+                );
+                $result['location']['continent_name'] = $continents[$record->continent_code];
 
                 $countryCode = $record->country_code;
                 $result['location']['country_code'] = $countryCode;
-                //$result['location']['country_names'] = $record->country->names;
+                $result['location']['country_names'] = $record->country_name;
 
                 $result['location']['postal_code'] = $record->postal_code;
                 $result['location']['city_name'] = $record->city;
 
                 $result['location']['latitude'] = $record->latitude;
                 $result['location']['longitude'] = $record->longitude;
-                // get timezone from region code
-                //$result['location']['time_zone'] = $record->location->timeZone;
+                $result['location']['time_zone'] =
+                    get_time_zone($record->country_code, $record->region);
             } catch (Exception $e) {
                 $status = self::setStatus('GEOIP_EXCEPTION', $e, $status);
             }
