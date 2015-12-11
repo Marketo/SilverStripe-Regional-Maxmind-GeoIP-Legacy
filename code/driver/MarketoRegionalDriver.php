@@ -134,6 +134,7 @@ class MarketoRegionalDriver extends DataObject
             */
         }
         if ($record) {
+            $result['organization']['name'] = $record;
             $result['organization']['isp'] = $record;
         }
         
