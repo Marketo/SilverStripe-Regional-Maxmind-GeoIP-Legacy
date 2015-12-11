@@ -145,7 +145,7 @@ class MarketoRegionalDriver extends DataObject
             $this->json = json_encode(array(
                 'request' => $request,
                 'status' => $statusArray,
-                'result' => $result
+                'result' => array('maxmind-geoip-legacy' => $result)
             ));
             return null;
         } else {
@@ -155,7 +155,7 @@ class MarketoRegionalDriver extends DataObject
             $this->json = json_encode(array(
                 'request' => $request,
                 'status' => $statusArray,
-                'result' => $result
+                'result' => array('maxmind-geoip-legacy' => $result)
             ));
         }
 
@@ -165,7 +165,7 @@ class MarketoRegionalDriver extends DataObject
         $dbJson = json_encode(array(
             'request' => $request,
             'status' => $statusArray,
-            'result' => $result
+            'result' => array('maxmind-geoip-legacy' => $result)
         ));
 
         return $dbJson;
