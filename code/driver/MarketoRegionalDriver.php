@@ -87,7 +87,7 @@ class MarketoRegionalDriver extends DataObject
 
                 $countryCode = $record->country_code;
                 $result['location']['country_code'] = $countryCode;
-                $result['location']['country_names'] = $record->country_name;
+                $result['location']['country_name'] = $record->country_name;
 
                 $result['location']['postal_code'] = $record->postal_code;
                 $result['location']['city_name'] = $record->city;
