@@ -73,13 +73,17 @@ class MarketoRegionalDriver extends DataObject
         $countryCode = null;
         if ($record && is_object($record)) {
             try {
-                $result['location']['continent_code'] = $record->continent_code;
                 // fetch continent by continent_code
                 $continents = Config::inst()->get(
                     'IPInfoCache',
                     'Continents'
                 );
-                $result['location']['continent_name'] = $continents[$record->continent_code];
+                if (array_key_exists($record->continent_code, $continents)) {
+                    $result['location']['continent_code'] = $record->continent_code;
+                }
+                if (isset($record->continent_code) && isset($continents[$record->continent_code])) {
+                    $result['location']['continent_name'] = $continents[$record->continent_code];
+                }
 
                 $countryCode = $record->country_code;
                 $result['location']['country_code'] = $countryCode;
@@ -121,7 +125,7 @@ class MarketoRegionalDriver extends DataObject
 
         // fetch ISP details
         $pathISP = Config::inst()->get('IPInfoCache', 'GeoPathISP');
-        if (!$pathISP) $path = $this->defaultPathISP;
+        if (!$pathISP) $pathISP = $this->defaultPathISP;
         if (!file_exists($pathISP)) {
             user_error('Error loading Geo ISP database', E_USER_ERROR);
         }
