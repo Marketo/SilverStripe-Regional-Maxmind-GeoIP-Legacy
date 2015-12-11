@@ -25,7 +25,7 @@ This can be done by adding a couple of lines to the config.yml file as per the e
 
 ```
 IPInfoCache:
-  GeoPath: '/usr/share/GeoIP/GeoIPCity.dat'
+  GeoPathCity: '/usr/share/GeoIP/GeoIPCity.dat'
   GeoPathISP: '/usr/share/GeoIP/GeoIPISP.dat'
 ```
 
