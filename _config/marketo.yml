@@ -11,11 +11,14 @@ DefaultMarketoResponse:
       isp: Comcast Cable
     location:
       continent_code: NA
-      continent_name: North America
+      continent_names:
+        en: North America
       country_code: US
-      country_name: United States
+      country_names:
+        en: United States
       postal_code: 94404
-      city_name: San Mateo
+      city_names:
+        en: San Mateo
       latitude: null
       longitude: null
       time_zone: America/Los_Angeles

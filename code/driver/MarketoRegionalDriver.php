@@ -82,15 +82,15 @@ class MarketoRegionalDriver extends DataObject
                     $result['location']['continent_code'] = $record->continent_code;
                 }
                 if (isset($record->continent_code) && isset($continents[$record->continent_code])) {
-                    $result['location']['continent_name'] = $continents[$record->continent_code];
+                    $result['location']['continent_names']['en'] = $continents[$record->continent_code];
                 }
 
                 $countryCode = $record->country_code;
                 $result['location']['country_code'] = $countryCode;
-                $result['location']['country_name'] = $record->country_name;
+                $result['location']['country_names']['en'] = $record->country_name;
 
                 $result['location']['postal_code'] = $record->postal_code;
-                $result['location']['city_name'] = $record->city;
+                $result['location']['city_names']['en'] = $record->city;
 
                 $result['location']['latitude'] = $record->latitude;
                 $result['location']['longitude'] = $record->longitude;
