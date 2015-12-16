@@ -60,8 +60,8 @@ class MarketoRegionalDriver extends DataObject
             if ($isPrivate) {
                 $status = self::setStatus('IP_ADDRESS_RESERVED', null, $status);
             }
-            $geo = geoip_open($path, GEOIP_STANDARD);
-            $record = geoip_record_by_addr($geo, $ip);
+            //$geo = geoip_open($path, GEOIP_STANDARD);
+            $record = geoip_record_by_name($ip);
         } else {
             /* Will add IPv6 checking later
             $path = '/usr/share/GeoIP/GeoLiteCityv6.dat';
@@ -129,9 +129,9 @@ class MarketoRegionalDriver extends DataObject
         if (!file_exists($pathISP)) {
             user_error('Error loading Geo ISP database', E_USER_ERROR);
         }
-        $isp = geoip_open($pathISP, GEOIP_STANDARD);
+        //$isp = geoip_open($pathISP, GEOIP_STANDARD);
         if ($request['type'] == 'IPv4') {
-            $record = geoip_name_by_addr($isp, $ip);
+            $record = geoip_isp_by_name($ip);
         } else {
             /* Will add IPv6 checking later
             $record = geoip_name_by_addr_v6($isp, $ip);
