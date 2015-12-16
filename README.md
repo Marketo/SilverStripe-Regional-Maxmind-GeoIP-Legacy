@@ -8,6 +8,7 @@ Kirk Mayo
 
 * SilverStripe 3.2
 * SilverStripe-Regional Module
+* PHP 5 GeoIP module
 
 # SilverStripe-Regional-Maxmind-GeoIP-Legacy
 
@@ -20,14 +21,10 @@ Driver allowing the SilverStripe-Regional module to pull data from Maxmind using
 
 ## Config
 
-You will need to set the location of the database files if they are in the default locations.
-This can be done by adding a couple of lines to the config.yml file as per the example below.
-
-```
-IPInfoCache:
-  GeoPathCity: '/usr/share/GeoIP/GeoIPCity.dat'
-  GeoPathISP: '/usr/share/GeoIP/GeoIPISP.dat'
-```
+You will need to confirm that the MaxMind GeoIP database files have been setup and that you can use the 
+GeoIP function that come with the PHP 5 GeoIP module.
+Certain versions of the MaxMind GeoIP API module (https://github.com/maxmind/geoip-api-php/) will conflict
+with the PHP 5 GeoIP functions.
 
 ## GeoIP database
 

@@ -6,10 +6,8 @@
  * A cache of geo data for a IP address
  */
 
-class MarketoRegionalDriver extends DataObject
+class GeoIPLegacyDriver
 {
-    public $defaultPath = '/usr/share/GeoIP/GeoIP.dat';
-    public $defaultPathISP = '/usr/share/GeoIP/GeoIPISP.dat';
     public $json;
 
     public static $statuses = array (
@@ -41,101 +39,52 @@ class MarketoRegionalDriver extends DataObject
     }
 
     public function processIP($ip) {
-        // setup the default marketo bject
-        $request = Config::inst()->get('DefaultMarketoResponse', 'request');
-        $statusArray = Config::inst()->get('DefaultMarketoResponse', 'status');
-        $result = Config::inst()->get('DefaultMarketoResponse', 'result');
-
         $status = null;
-        $path = Config::inst()->get('IPInfoCache', 'GeoPathCity');
-        if (!$path) $path = $this->defaultPath;
-        if (!file_exists($path)) {
-            user_error('Error loading Geo database', E_USER_ERROR);
-        }
 
         $request['ip'] = $ip;
-        $request['type'] = MarketoRegionalDriver::ipVersion($ip);
+        $request['type'] = self::ipVersion($ip);
         if ($request['type'] == 'IPv4') {
-            $isPrivate = MarketoRegionalDriver::isPrivateIP($ip);
+            $isPrivate = self::isPrivateIP($ip);
             if ($isPrivate) {
                 $status = self::setStatus('IP_ADDRESS_RESERVED', null, $status);
             }
-            //$geo = geoip_open($path, GEOIP_STANDARD);
             $record = geoip_record_by_name($ip);
-        } else {
-            /* Will add IPv6 checking later
-            $path = '/usr/share/GeoIP/GeoLiteCityv6.dat';
-            $geo = geoip_open($path, GEOIP_STANDARD);
-            $record = geoip_record_by_addr_v6($geo, $ip);
-            */
         }
 
         $countryCode = null;
-        if ($record && is_object($record)) {
+        if ($record && is_array($record)) {
             try {
                 // fetch continent by continent_code
                 $continents = Config::inst()->get(
                     'IPInfoCache',
                     'Continents'
                 );
-                if (array_key_exists($record->continent_code, $continents)) {
-                    $result['location']['continent_code'] = $record->continent_code;
+                if (array_key_exists($record['continent_code'], $continents)) {
+                    $result['location']['continent_code'] = $record['continent_code'];
                 }
-                if (isset($record->continent_code) && isset($continents[$record->continent_code])) {
-                    $result['location']['continent_names']['en'] = $continents[$record->continent_code];
+                if (isset($record['continent_code']) && isset($continents[$record['continent_code']])) {
+                    $result['location']['continent_names']['en'] = $continents[$record['continent_code']];
                 }
 
-                $countryCode = $record->country_code;
+                $countryCode = $record['country_code'];
                 $result['location']['country_code'] = $countryCode;
-                $result['location']['country_names']['en'] = $record->country_name;
+                $result['location']['country_names']['en'] = $record['country_name'];
 
-                $result['location']['postal_code'] = $record->postal_code;
-                $result['location']['city_names']['en'] = $record->city;
+                $result['location']['postal_code'] = $record['postal_code'];
+                $result['location']['city_names']['en'] = $record['city'];
 
-                $result['location']['latitude'] = $record->latitude;
-                $result['location']['longitude'] = $record->longitude;
+                $result['location']['latitude'] = $record['latitude'];
+                $result['location']['longitude'] = $record['longitude'];
                 $result['location']['time_zone'] =
-                    get_time_zone($record->country_code, $record->region);
+                    geoip_time_zone_by_country_and_region($record['country_code'], $record['region']);
             } catch (Exception $e) {
                 $status = self::setStatus('GEOIP_EXCEPTION', $e, $status);
             }
         }
 
-        $geoRegion = null;
-        if ($countryCode) {
-            $geoRegion = GeoRegion::get()
-                ->filter('RegionCode', $countryCode)
-                ->first();
-            if ($geoRegion && $geoRegion->exists()) {
-                $result['marketo-region']['name'] = $geoRegion->Name;
-                $result['marketo-region']['code'] = $geoRegion->RegionCode;
-                $result['marketo-region']['time_zone'] = $geoRegion->TimeZone;
-                $currency = $geoRegion->Currency();
-                if ($currency && $currency->exists()) {
-                    $result['marketo-region']['currency']['name'] = $currency->Name;
-                    $result['marketo-region']['currency']['code'] = $currency->Code;
-                    $result['marketo-region']['currency']['num'] = $currency->Number;
-                    $result['marketo-region']['currency']['symbol'] = $currency->Symbol;
-                    $result['marketo-region']['currency']['thounsands'] = $currency->Thounsands;
-                    $result['marketo-region']['currency']['decimal'] = $currency->Deciaml;
-                    $result['marketo-region']['currency']['format'] = $currency->Format;
-                }
-            }
-        }
-
         // fetch ISP details
-        $pathISP = Config::inst()->get('IPInfoCache', 'GeoPathISP');
-        if (!$pathISP) $pathISP = $this->defaultPathISP;
-        if (!file_exists($pathISP)) {
-            user_error('Error loading Geo ISP database', E_USER_ERROR);
-        }
-        //$isp = geoip_open($pathISP, GEOIP_STANDARD);
         if ($request['type'] == 'IPv4') {
             $record = geoip_isp_by_name($ip);
-        } else {
-            /* Will add IPv6 checking later
-            $record = geoip_name_by_addr_v6($isp, $ip);
-            */
         }
         if ($record) {
             $result['organization']['name'] = $record;
@@ -170,6 +119,7 @@ class MarketoRegionalDriver extends DataObject
         $dbJson = json_encode(array(
             'request' => $request,
             'status' => $statusArray,
+            //'result' => $result
             'result' => array('maxmind-geoip-legacy' => $result)
         ));
 
@@ -212,7 +162,7 @@ class MarketoRegionalDriver extends DataObject
     public static function isPrivateIP($ip) {
         $longIP = ip2long($ip);
         if ($longIP != -1) {
-            foreach (MarketoRegionalDriver::$privateAddresses as $privateAddress) {
+            foreach (self::$privateAddresses as $privateAddress) {
                 list($start, $end) = explode('|', $privateAddress);
                 if ($longIP >= ip2long($start) && $longIP <= ip2long($end)) return (true);
             }

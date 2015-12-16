@@ -1,5 +1,4 @@
 IPInfoCache:
-  Driver: 'MarketoRegionalDriver'
   Continents:
     AS: Asia : AS
     SA: South America: SA
