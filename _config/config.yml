@@ -1,9 +1,2 @@
 IPInfoCache:
-  Continents:
-    AS: Asia : AS
-    SA: South America: SA
-    NA: North America: NA
-    AF: Africa: AF
-    EU: Europe: EU
-    AN: Antarctica: AN
-    Oceania: OC
+  Driver: 'GeoIPLegacyDriver'
