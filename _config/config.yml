@@ -1,2 +1,5 @@
+---
+Name: geoip
+---
 IPInfoCache:
   Driver: 'GeoIPLegacyDriver'
