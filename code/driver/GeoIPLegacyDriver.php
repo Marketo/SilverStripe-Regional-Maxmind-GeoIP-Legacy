@@ -10,7 +10,7 @@ class GeoIPLegacyDriver
 {
     public $json;
 
-    public static $statuses = array (
+    public static $statuses = array(
         'SUCCESS' => 'Success',
         'SUCCESS_CACHED' => 'Successfully found and cached response',
         'IP_ADDRESS_INVALID' => 'You have not supplied a valid IPv4 or IPv6 address',
@@ -30,14 +30,16 @@ class GeoIPLegacyDriver
         '127.0.0.0|127.255.255.255'
     );
 
-    public static function getStatuses($code = null) {
+    public static function getStatuses($code = null)
+    {
         if ($code && isset(self::$statuses[$code])) {
             return self::$statuses[$code];
         }
         return self::$statuses;
     }
 
-    public function processIP($ip) {
+    public function processIP($ip)
+    {
         $status = null;
 
         $request['ip'] = $ip;
@@ -125,8 +127,11 @@ class GeoIPLegacyDriver
         return $dbJson;
     }
 
-    public static function setStatus($code, $e, $status = null) {
-        if ($status) return $status;
+    public static function setStatus($code, $e, $status = null)
+    {
+        if ($status) {
+            return $status;
+        }
         if ($code == 'GEOIP_EXCEPTION' && $e && $e instanceof Exception) {
             self::$statuses['GEOIP_EXCEPTION'] = str_replace(
                 'ERROR',
@@ -137,33 +142,43 @@ class GeoIPLegacyDriver
         return $code;
     }
 
-    public static function getStatusMessage($status) {
-        if (!$status) $status = 'SUCCESS_CACHED';
+    public static function getStatusMessage($status)
+    {
+        if (!$status) {
+            $status = 'SUCCESS_CACHED';
+        }
         return self::$statuses[$status];
     }
 
-    public function getDetails() {
+    public function getDetails()
+    {
         return $this->Info;
     }
 
-    public function getJSON() {
+    public function getJSON()
+    {
         return $this->json;
     }
 
-    public function clearIPCache() {
+    public function clearIPCache()
+    {
         $this->write(false, false, true);
     }
 
-    public static function ipVersion($ip = null) {
+    public static function ipVersion($ip = null)
+    {
         return (strpos($ip, ':') === false) ? 'IPv4' : 'IPv6';
     }
 
-    public static function isPrivateIP($ip) {
+    public static function isPrivateIP($ip)
+    {
         $longIP = ip2long($ip);
         if ($longIP != -1) {
             foreach (self::$privateAddresses as $privateAddress) {
                 list($start, $end) = explode('|', $privateAddress);
-                if ($longIP >= ip2long($start) && $longIP <= ip2long($end)) return (true);
+                if ($longIP >= ip2long($start) && $longIP <= ip2long($end)) {
+                    return (true);
+                }
             }
         }
         return false;
